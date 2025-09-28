@@ -68,6 +68,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipTimeLayout() {
+    var amountInput by remember { mutableStateOf("") } //stored as a string and needs to be converted
+    val amount = amountInput.toDoubleOrNull() ?: 0.0 //will parse a string and convert to a double or return 0.0 if null
+    val tip = calculateTip(amount)
     Column(
         modifier = Modifier
             .statusBarsPadding()
@@ -82,7 +85,7 @@ fun TipTimeLayout() {
                 .padding(bottom = 16.dp, top = 40.dp)
                 .align(alignment = Alignment.Start)
         )
-        EditNumberField(modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth())
+        EditNumberField(value = amountInput,  onValueChange = { amountInput = it }, Modifier.padding(bottom = 32.dp).fillMaxWidth())
         Text(
             text = stringResource(R.string.tip_amount, "$0.00"),
             style = MaterialTheme.typography.displaySmall
@@ -111,11 +114,11 @@ fun TipTimeLayoutPreview() {
 
 //Textfield for user input
 @Composable
-fun EditNumberField(modifier: Modifier = Modifier) {
-    var amountInput by remember { mutableStateOf("") }
+fun EditNumberField(value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
+
     TextField(
-        value = amountInput, //this will show in the text box
-        onValueChange = { amountInput = it }, //lambda callback thats triggered when the user enters anything in the textbox
+        value = value, //this will show in the text box
+        onValueChange = onValueChange, //lambda callback thats triggered when the user enters anything in the textbox
         label = { Text(stringResource(R.string.bill_amount))}, //text is stored in the string res file
         singleLine = true, //only allows one line of input
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), //sets the keyboard the pops up for the user
